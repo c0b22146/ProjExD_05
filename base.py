@@ -96,13 +96,16 @@ def main(screen: pg.Surface, screen_size: np.array) -> bool | None:
     clock = pg.time.Clock()
 
     # setup Surface
-    fields: list[Field] = [Field()]
+    fields: list[Field] = []
     chara = Character()
 
     # fields make
-    wall_width = 20
-    fields.append(Field((0, 0, wall_width, screen_size[1])))
-    fields.append(Field((win_size[0]-wall_width, 0, wall_width, screen_size[1])))
+    wall_width = 10
+    fields.append(Field((0, 530, 700, 100)))
+    fields.append(Field((800, 530, 200, 100)))
+    fields.append(Field((200, 490, 40, 40)))
+    fields.append(Field((300, 410, 120, 40)))
+
 
     # main loop process
     done = False
