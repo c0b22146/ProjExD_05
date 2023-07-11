@@ -42,16 +42,26 @@ class Character:
     """
     # setup variables
     delta = {}
+    chara_color = np.array((127, 127, 127))
     chara_rect = np.array((20, 500, 20, 20))
     down_speed = np.array((0, 5))
     move_speed = np.array((5, 0))
 
-    def __init__(self, chara_rect: tuple[int, int, int, int] = chara_rect):
+    effect_rect = np.array((0, 0, 5, 5))
+    effect_time = 25
+
+    def __init__(self, chara_rect: tuple[int, int, int, int] = chara_rect, effect_freq: int = 2):
         """"""
         self.image = pg.Surface(chara_rect[2:])
-        pg.draw.rect(self.image, (127, 127, 127), (0, 0, *chara_rect[2:]))
+        pg.draw.rect(self.image, self.chara_color, (0, 0, *chara_rect[2:]))
         self.rect = self.image.get_rect()
         self.rect[:-2] = chara_rect[:-2]
+        # effect image
+        self.effect_image = pg.Surface(self.effect_rect[2:])
+        pg.draw.rect(self.effect_image, self.chara_color, self.effect_rect)
+        self.effects = list()
+        self.remove_alpha = 255//self.effect_time
+        self.effect_freq = effect_freq
         return
 
     def update(self, fields: list) -> None:
@@ -60,6 +70,19 @@ class Character:
         for field in fields:
             if field.get_rect().colliderect(self.rect):
                 self.rect[:-2] = np.array(self.rect[:-2]) - self.down_speed
+        # effect process
+        #  effect create
+        if random.randint(0, self.effect_freq-1) == 0:
+            effect = self.effect_image.copy()
+            effect_rect = effect.get_rect()
+            effect_rect[:-2] = [random.randint(self.rect[i], self.rect[i] + self.rect[i+2] - effect_rect[i+2]) for i in range(2)]
+            self.effects.append([255, effect, effect_rect])
+        #  effect update
+        for i in range(len(self.effects)):
+            self.effects[i][0] -= self.remove_alpha
+            self.effects[i][1].set_alpha(self.effects[i][0])
+        if len(self.effects) > 0 > self.effects[0][0]:
+            del self.effects[0]
         return
 
     def move(self, LR: str, fields: list) -> None:
@@ -78,6 +101,8 @@ class Character:
     def draw(self, screen: pg.Surface) -> None:
         """"""
         screen.blit(self.image, self.rect)
+        for effect in self.effects:
+            screen.blit(effect[1], effect[2])
         return
 
 
@@ -101,10 +126,13 @@ def main(screen: pg.Surface, screen_size: np.array) -> bool | None:
 
     # fields make
     wall_width = 10
+    fields.append(Field())
+    """
     fields.append(Field((0, 530, 700, 100)))
     fields.append(Field((800, 530, 200, 100)))
     fields.append(Field((200, 490, 40, 40)))
     fields.append(Field((300, 410, 120, 40)))
+    """
 
 
     # main loop process
