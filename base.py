@@ -46,6 +46,7 @@ class Character:
     chara_size = np.array((20, 20))
     down_speed = np.array((0, 3))
     move_speed = np.array((5, 0))
+    
 
     def __init__(self):
         """"""
@@ -53,15 +54,30 @@ class Character:
         pg.draw.rect(self.image, (127, 127, 127), (0, 0, *self.chara_size))
         self.rect = self.image.get_rect()
         self.rect[:-2] = [10, 500]
+        self.jump_time = 0
+        self.jump_poss = False
         return
 
     def update(self, fields: list) -> None:
         """"""
-        self.rect[:-2] = np.array(self.rect[:-2]) + self.down_speed
-        for field in fields:
-            if field.get_rect().colliderect(self.rect):
-                self.rect[:-2] = np.array(self.rect[:-2]) - self.down_speed
+        if self.jump_time <= 0 :
+            self.rect[:-2] = np.array(self.rect[:-2]) + self.down_speed
+            for field in fields:
+                if field.get_rect().colliderect(self.rect):
+                    self.rect[:-2] = np.array(self.rect[:-2]) - self.down_speed
+                    self.jump_poss = True
+                
+        else:
+            self.rect[:-2] = np.array(self.rect[:-2]) - self.down_speed
+        self.jump_time -= 1
         return
+    
+    def jump(self):
+        if self.jump_poss:
+            self.jump_time = 25
+            self.jump_poss = False
+        return
+        
 
     def move(self, LR: str) -> None:
         """"""
@@ -70,6 +86,7 @@ class Character:
             move = self.move_speed * -1
         elif LR == "R":
             move = self.move_speed
+
         self.rect[:-2] = self.rect[:-2] + move
         return
 
@@ -120,6 +137,9 @@ def main(screen: pg.Surface) -> bool | None:
 
         if key_pressed[pg.K_RIGHT]:
             chara.move("R")
+
+        if event.type == pg.KEYDOWN and key_pressed[pg.K_UP]:
+            chara.jump()
 
         # update
         chara.update(fields)
