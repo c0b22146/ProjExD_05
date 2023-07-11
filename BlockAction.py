@@ -10,6 +10,28 @@ import pygame as pg
 import random
 import numpy as np
 
+class Goal:
+    """
+    ゴールできます
+    """
+    def __init__(self, goal_post:list):
+        self.goal_size = np.array((30, 30))
+        self.image = pg.Surface(self.goal_size)
+        pg.draw.rect(self.image, (163, 212, 255), (0, 0, *self.goal_size))
+        self.rect = self.image.get_rect()
+        self.rect[:-2] = goal_post
+        return
+
+    def draw(self, screen: pg.Surface) -> None:
+        """"""
+        screen.blit(self.image, self.rect)
+        return
+    
+    def do_goal(self, chara_rct: pg.Rect):
+        print(chara_rct)
+        if pg.Rect.contains(self.rect, chara_rct):
+            end(True)
+
 
 # class objects
 class Field:
@@ -96,6 +118,7 @@ def main(screen: pg.Surface) -> bool | None:
     # setup Surface
     fields: list[Field] = [Field()]
     chara = Character()
+    goal = Goal([960, 500])
 
     # main loop process
     done = False
@@ -128,7 +151,9 @@ def main(screen: pg.Surface) -> bool | None:
         screen.fill("white", (0, 0, 1000, 600))
         for field in fields:
             field.draw(screen)
+        goal.draw(screen)
         chara.draw(screen)
+        goal.do_goal(chara.rect)
         pg.display.update()
 
         # tike process
