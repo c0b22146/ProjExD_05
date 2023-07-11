@@ -31,16 +31,16 @@ class Goal:
     def do_goal(self, chara_rct: pg.Rect):
         return pg.Rect.contains(self.rect, chara_rct)#四角に四角inしてたらTrue
 
-class Status:
+class Status:#残り時間を表示
     def __init__(self, limit):
         self.font = pg.font.Font(None, 50)
         self.limit = limit
 
     def draw(self, screen: pg.Surface):
         self.txt = self.font.render(str((self.time_limit)/50), True, (255, 255, 255))
-        screen.blit(self.txt, [10, 560])
+        screen.blit(self.txt, [10, 560])#残り時間表示
     
-    def update(self, tmr):
+    def update(self, tmr):#時間を更新。self.time_limitは残り時間
         self.time_limit = self.limit-tmr
         if self.time_limit <= 0:
             return True
@@ -129,7 +129,7 @@ def main(screen: pg.Surface) -> bool | None:
     # setup variables
     clock = pg.time.Clock()
     tmr = 0
-    time_limit = 50*3
+    time_limit = 50*10
 
     # setup Surface
     fields: list[Field] = [Field()]
