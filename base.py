@@ -17,9 +17,11 @@ class Field:
         class about field
     """
     # setup variables
+    field_unit = 5
 
-    def __init__(self, field_rect: tuple[int, int, int, int] = (0, 530, 1000, 100)):
+    def __init__(self, field_rect_block_unit: tuple[int, int, int, int] = (0, 106, 200, 20)):
         """"""
+        field_rect = np.array(field_rect_block_unit) * self.field_unit
         self.field = pg.Surface(field_rect[2:])
         pg.draw.rect(self.field, "black", (0, 0, *field_rect[2:]))
         self.rect = self.field.get_rect()
@@ -42,12 +44,13 @@ class Character:
     """
     # setup variables
     delta = {}
+    field_unit = Field.field_unit
     chara_color = np.array((127, 127, 127))
-    chara_rect = np.array((20, 500, 20, 20))
-    down_speed = np.array((0, 5))
-    move_speed = np.array((5, 0))
+    chara_rect = np.array((20, 500, field_unit*4, field_unit*4))
+    down_speed = np.array((0, field_unit))
+    move_speed = np.array((field_unit, 0))
 
-    effect_rect = np.array((0, 0, 5, 5))
+    effect_rect = np.array((0, 0, field_unit, field_unit))
     effect_time = 25
 
     def __init__(self, chara_rect: tuple[int, int, int, int] = chara_rect, effect_freq: int = 2):
@@ -75,7 +78,9 @@ class Character:
         if random.randint(0, self.effect_freq-1) == 0:
             effect = self.effect_image.copy()
             effect_rect = effect.get_rect()
-            effect_rect[:-2] = [random.randint(self.rect[i], self.rect[i] + self.rect[i+2] - effect_rect[i+2]) for i in range(2)]
+            effect_rect[:-2] = \
+                [random.randint(self.rect[i], self.rect[i] + self.rect[i+2] - effect_rect[i+2])
+                 for i in range(2)]
             self.effects.append([255, effect, effect_rect])
         #  effect update
         for i in range(len(self.effects)):
@@ -126,14 +131,12 @@ def main(screen: pg.Surface, screen_size: np.array) -> bool | None:
 
     # fields make
     wall_width = 10
-    fields.append(Field())
-    """
-    fields.append(Field((0, 530, 700, 100)))
-    fields.append(Field((800, 530, 200, 100)))
-    fields.append(Field((200, 490, 40, 40)))
-    fields.append(Field((300, 410, 120, 40)))
-    """
+    # fields.append(Field())
 
+    fields.append(Field((0, 106, 140, 20)))
+    fields.append(Field((160, 106, 40, 20)))
+    # fields.append(Field((40, 98, 8, 8)))
+    # fields.append(Field((60, 82, 24, 8)))
 
     # main loop process
     done = False
