@@ -171,7 +171,7 @@ def main(screen: pg.Surface, screen_size: np.array) -> bool | None:
         for event in pg.event.get():
             # quit process
             if event.type == pg.QUIT:
-                
+                end(True, screen)
                 return
 
             # reboot process
