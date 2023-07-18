@@ -18,10 +18,13 @@ class Field:
     """
     # setup variables
     field_unit = 5
+    base_flore = 530
 
-    def __init__(self, field_rect_block_unit: tuple[int, int, int, int] = (0, 106, 200, 20)):
+    def __init__(self, field_rect: tuple[int, int, int, int] = (0, 0, 1000, 100)):
         """"""
-        field_rect = np.array(field_rect_block_unit) * self.field_unit
+        field_rect = np.array(field_rect)
+        field_rect[1] = self.base_flore - field_rect[1]
+        field_rect = field_rect // 5 * self.field_unit
         self.field = pg.Surface(field_rect[2:])
         pg.draw.rect(self.field, "black", (0, 0, *field_rect[2:]))
         self.rect = self.field.get_rect()
@@ -130,13 +133,19 @@ def main(screen: pg.Surface, screen_size: np.array) -> bool | None:
     chara = Character()
 
     # fields make
-    wall_width = 10
-    # fields.append(Field())
+    unit = Field.field_unit
+    block = unit * 8
+    field_adds = \
+        [Field(np.array((0, 0, 16, 3)) * block),
+         Field(np.array((21, 0, 5, 3)) * block),
+         Field(np.array((4, 1, 1, 1)) * block),
+         Field(np.array((7, 3, 3, 1)) * block),
+         Field(np.array((15, 3, 1, 3)) * block)
+         ]
 
-    fields.append(Field((0, 106, 140, 20)))
-    fields.append(Field((160, 106, 40, 20)))
-    # fields.append(Field((40, 98, 8, 8)))
-    # fields.append(Field((60, 82, 24, 8)))
+    # fields setup
+    for field_add in field_adds:
+        fields.append(field_add)
 
     # main loop process
     done = False
