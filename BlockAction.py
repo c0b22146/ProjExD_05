@@ -168,6 +168,51 @@ class Character:
         for effect in self.effects:
             screen.blit(effect[1], effect[2])
         return
+    
+class Enemy(pg.sprite.Sprite):
+    """
+        class about Enemy
+    """
+    enemy_size = np.array((30, 30))
+    enemy_down_speed = np.array((0, 5))
+    enemy_speed = 5
+    
+    def __init__(self,x,y):
+        """
+            敵Surfaceを生成する
+        """
+        super().__init__()
+        self.image = pg.Surface(self.enemy_size)
+        pg.draw.rect(self.image, (255, 0, 0), (0, 0, *self.enemy_size))
+        self.rect = self.image.get_rect()
+        self.rect.center = x,y
+        return
+    
+    def update(self, fields: list) -> None:
+        """
+            敵の位置を更新する
+        """
+        self.rect[:-2] = np.array(self.rect[:-2]) + self.enemy_down_speed
+        for field in fields:
+            if field.get_rect().colliderect(self.rect):
+                self.rect[:-2] = np.array(self.rect[:-2]) - self.enemy_down_speed
+                self.rect.move_ip(+self.enemy_speed, 0)
+                will_rect = self.rect.copy()
+                will_rect.move_ip(+self.enemy_speed, 0)
+                if field.get_rect().colliderect(will_rect):
+                    self.rect[:-2] = np.array(self.rect[:-2]) + self.enemy_down_speed
+                    self.rect.move_ip(-self.enemy_speed*2, 0)
+                    self.enemy_speed *= -1
+
+        return
+    
+    
+    def draw(self, screen: pg.Surface) -> None:
+        """
+            敵の描画
+        """
+        screen.blit(self.image, self.rect)
+        return
 
 
 def end(clear: bool, screen: pg.Surface) -> None:
@@ -202,6 +247,10 @@ def main(screen: pg.Surface, screen_size: np.array) -> bool | None:
     fields: list[Field] = []
     chara = Character()
     timer = Status(time_limit)
+
+    enemys = pg.sprite.Group()
+    enemys_xy = []
+    enemys.add(Enemy(320,300))
 
     # fields make
     unit = Field.field_unit
@@ -245,6 +294,14 @@ def main(screen: pg.Surface, screen_size: np.array) -> bool | None:
         if key_pressed[pg.K_RIGHT]:
             chara.move("R", fields)
 
+        for enemy in enemys:
+            if pg.sprite.spritecollide(chara, enemys, True):
+                if enemy.rect.top -5 <= chara.rect.bottom <= enemy.rect.top + 5:
+                    pass
+                
+                else:
+                    end(False)
+
         if event.type == pg.KEYDOWN and key_pressed[pg.K_UP]:
             chara.jump()
 
@@ -256,6 +313,7 @@ def main(screen: pg.Surface, screen_size: np.array) -> bool | None:
         if goal.do_goal(chara.rect):
             end(True)#clear!いえーい
             return
+        enemys.update(fields)
 
         # draw
         screen.fill("white", (0, 0, 1000, 600))
@@ -264,6 +322,7 @@ def main(screen: pg.Surface, screen_size: np.array) -> bool | None:
         timer.draw(screen)
         goal.draw(screen)
         chara.draw(screen)
+        enemys.draw(screen)
         pg.display.update()
 
         # tike process
