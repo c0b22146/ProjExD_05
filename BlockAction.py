@@ -18,13 +18,12 @@ class Field:
     """
     # setup variables
 
-    def __init__(self):
+    def __init__(self, field_rect: tuple[int, int, int, int] = (0, 530, 1000, 100)):
         """"""
-        rect_s = (1000, 100)
-        self.field = pg.Surface(rect_s)
-        pg.draw.rect(self.field, "black", (0, 0, *rect_s))
+        self.field = pg.Surface(field_rect[2:])
+        pg.draw.rect(self.field, "black", (0, 0, *field_rect[2:]))
         self.rect = self.field.get_rect()
-        self.rect[:-2] = [0, 530]
+        self.rect[:-2] = field_rect[:-2]
         return
 
     def draw(self, screen: pg.Surface) -> None:
@@ -43,16 +42,16 @@ class Character:
     """
     # setup variables
     delta = {}
-    chara_size = np.array((20, 20))
-    down_speed = np.array((0, 3))
+    chara_rect = np.array((20, 500, 20, 20))
+    down_speed = np.array((0, 5))
     move_speed = np.array((5, 0))
 
-    def __init__(self):
+    def __init__(self, chara_rect: tuple[int, int, int, int] = chara_rect):
         """"""
-        self.image = pg.Surface(self.chara_size)
-        pg.draw.rect(self.image, (127, 127, 127), (0, 0, *self.chara_size))
+        self.image = pg.Surface(chara_rect[2:])
+        pg.draw.rect(self.image, (127, 127, 127), (0, 0, *chara_rect[2:]))
         self.rect = self.image.get_rect()
-        self.rect[:-2] = [10, 500]
+        self.rect[:-2] = chara_rect[:-2]
         return
 
     def update(self, fields: list) -> None:
@@ -63,7 +62,7 @@ class Character:
                 self.rect[:-2] = np.array(self.rect[:-2]) - self.down_speed
         return
 
-    def move(self, LR: str) -> None:
+    def move(self, LR: str, fields: list) -> None:
         """"""
         move: np.array = np.array((0, 0))
         if LR == "L":
@@ -71,6 +70,9 @@ class Character:
         elif LR == "R":
             move = self.move_speed
         self.rect[:-2] = self.rect[:-2] + move
+        for field in fields:
+            if field.get_rect().colliderect(self.rect):
+                self.rect[:-2] = np.array(self.rect[:-2]) - move
         return
 
     def draw(self, screen: pg.Surface) -> None:
@@ -86,7 +88,7 @@ def end(clear: bool) -> None:
 
 
 # main function
-def main(screen: pg.Surface) -> bool | None:
+def main(screen: pg.Surface, screen_size: np.array) -> bool | None:
     """
         main process
     """
@@ -94,8 +96,16 @@ def main(screen: pg.Surface) -> bool | None:
     clock = pg.time.Clock()
 
     # setup Surface
-    fields: list[Field] = [Field()]
+    fields: list[Field] = []
     chara = Character()
+
+    # fields make
+    wall_width = 10
+    fields.append(Field((0, 530, 700, 100)))
+    fields.append(Field((800, 530, 200, 100)))
+    fields.append(Field((200, 490, 40, 40)))
+    fields.append(Field((300, 410, 120, 40)))
+
 
     # main loop process
     done = False
@@ -116,10 +126,10 @@ def main(screen: pg.Surface) -> bool | None:
 
             # player process
         if key_pressed[pg.K_LEFT]:
-            chara.move("L")
+            chara.move("L", fields)
 
         if key_pressed[pg.K_RIGHT]:
-            chara.move("R")
+            chara.move("R", fields)
 
         # update
         chara.update(fields)
@@ -153,7 +163,7 @@ if __name__ == '__main__':
         master = pg.display.set_mode(win_size)
 
         # main
-        reboot = main(master)
+        reboot = main(master, win_size)
 
         # end process
         if reboot is None:
