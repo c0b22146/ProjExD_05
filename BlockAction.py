@@ -1,7 +1,7 @@
 """
 
     ProjExD 共同開発
-    ・・・
+    上書き
 
 """
 # import module
