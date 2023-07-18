@@ -141,10 +141,14 @@ class Enemy(pg.sprite.Sprite):
         self.rect[:-2] = np.array(self.rect[:-2]) + self.enemy_down_speed
         for field in fields:
             if field.get_rect().colliderect(self.rect):
-                self.rect.bottom = field.rect.top
+                self.rect[:-2] = np.array(self.rect[:-2]) - self.enemy_down_speed
                 self.rect.move_ip(+self.enemy_speed, 0)
-            if self.rect.left < field.get_rect().left or field.get_rect().right < self.rect.right:
-                self.enemy_speed *= -1
+                if self.rect.left <= field.get_rect().left and field.get_rect().right <= self.rect.right:
+                    self.enemy_speed *= -1
+                elif self.rect.right - 5 <= field.get_rect().left <= self.rect.right +5:
+                    self.enemy_speed *= -1
+                elif self.rect.left - 5 <= field.get_rect().right <= self.rect.left + 5:
+                    self.enemy_speed *= -1
         return
     
     
