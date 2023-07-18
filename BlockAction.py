@@ -130,7 +130,6 @@ class Character:
 
         if self.jump_time <= 0 :
             self.rect[:-2] = np.array(self.rect[:-2]) + self.down_speed
-            print("junp")
             for field in fields:
                 if field.get_rect().colliderect(self.rect):
                     self.rect[:-2] = np.array(self.rect[:-2]) - self.down_speed
@@ -138,13 +137,12 @@ class Character:
         else:
             self.rect[:-2] = np.array(self.rect[:-2]) - self.down_speed
         self.jump_time -= 1
-        print(self.jump_time)
 
         return
     
     def jump(self):
         if self.jump_poss:
-            self.jump_time = 25
+            self.jump_time = 10
             self.jump_poss = False
         return
 
@@ -241,27 +239,37 @@ def main(screen: pg.Surface, screen_size: np.array) -> bool | None:
     # setup variables
     clock = pg.time.Clock()
     tmr = 0
-    time_limit = 50*10
+    time_limit = 50*13
 
     # setup Surface
     fields: list[Field] = []
     chara = Character()
     timer = Status(time_limit)
 
-    enemys = pg.sprite.Group()
-    enemys_xy = []
-    enemys.add(Enemy(320,300))
-
     # fields make
     unit = Field.field_unit
     block = unit * 8
-    field_adds = \
-        [Field(np.array((0, 0, 16, 3)) * block),
-         Field(np.array((21, 0, 5, 3)) * block),
-         Field(np.array((4, 1, 1, 1)) * block),
-         Field(np.array((7, 3, 3, 1)) * block),
-         Field(np.array((15, 3, 1, 3)) * block)
-         ]
+    block_list = ((0, 0, 13, 3), (14, 0, 6, 3), (22, 0, 3, 3),
+                  (2, 1, 3, 1), (3, 2, 2, 1), (4, 3, 1, 1),
+                  (7, 3, 4, 1), (9, 4, 2, 1), (10, 5, 1, 1),
+                  (12, 6, 1, 1), (17, 6, 1, 1),
+                  (12, 5, 6, 1), (19, 6, 2, 1), (20, 7, 3, 1),
+                  (12, 1, 1, 1), (14, 1, 1, 1), (19, 1, 1, 1))
+    
+    block_list_omake =((2, 4, 1, 1), (0, 5, 1, 1), (2, 6, 1, 1), (0, 7, 1, 1),
+                       (2, 8, 1, 1), (0, 9, 1, 1), (2, 10, 1, 1), (0, 11, 1, 1),
+                       (2, 12, 1, 1), (0, 13, 1, 1), (2, 14, 22, 1))#これはおまけブロック。
+    field_adds = []
+    for i in block_list:
+        field_adds.append(Field(np.array(i) * block))
+
+    enemys = pg.sprite.Group()
+    enemys.add(Enemy(6*block, 1*block))
+    enemys.add(Enemy(18*block+20, 1*block))
+    enemys.add(Enemy(14*block, 1*block))
+        
+    for i in block_list_omake:  #おまけ。
+        field_adds.append(Field(np.array(i) * block))
 
     goal = Goal([24 * block + 5, 1 * block])
 
@@ -296,11 +304,9 @@ def main(screen: pg.Surface, screen_size: np.array) -> bool | None:
 
         for enemy in enemys:
             if pg.sprite.spritecollide(chara, enemys, True):
-                if enemy.rect.top -5 <= chara.rect.bottom <= enemy.rect.top + 5:
-                    pass
-                
-                else:
-                    end(False)
+                if not(chara.rect.bottom <= enemy.rect.top + 5):
+                    end(False, screen)
+                    return
 
         if event.type == pg.KEYDOWN and key_pressed[pg.K_UP]:
             chara.jump()
@@ -308,10 +314,10 @@ def main(screen: pg.Surface, screen_size: np.array) -> bool | None:
         # update
         chara.update(fields)
         if timer.update(tmr):
-            end(False)
+            end(False, screen)
             return
         if goal.do_goal(chara.rect):
-            end(True)#clear!いえーい
+            end(True, screen)#clear!いえーい
             return
         enemys.update(fields)
 
