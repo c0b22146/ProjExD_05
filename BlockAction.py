@@ -9,6 +9,7 @@ import sys
 import pygame as pg
 import random
 import numpy as np
+import time
 
 
 # class objects
@@ -114,9 +115,21 @@ class Character:
         return
 
 
-def end(clear: bool) -> None:
-    """"""
-    print("end")
+def end(clear: bool, screen: pg.Surface) -> None:
+    """
+    ゲームの終了処理
+    """
+    font = pg.font.SysFont(None, 80)
+    txtc = font.render("Game Clear!!", True, (255, 0, 0))
+    txto = font.render("Game Over!!", True, (0, 0, 255))
+    if clear:
+        screen.blit(txtc, [320, 250])
+
+    else:
+        screen.blit(txto, [320, 250])
+
+    pg.display.update()
+    time.sleep(2)
     return
 
 
@@ -158,6 +171,7 @@ def main(screen: pg.Surface, screen_size: np.array) -> bool | None:
         for event in pg.event.get():
             # quit process
             if event.type == pg.QUIT:
+                
                 return
 
             # reboot process
