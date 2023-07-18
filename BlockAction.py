@@ -93,7 +93,7 @@ class Enemy(pg.sprite.Sprite):
         self.image = pg.Surface(self.enemy_size)
         pg.draw.rect(self.image, (255, 0, 0), (0, 0, *self.enemy_size))
         self.rect = self.image.get_rect()
-        self.rect.center = random.randint(200,980), 0
+        self.rect.center = random.randint(200,980), random.randint(0,400)
         self.enemy_speed = 0
         while -3 <= self.enemy_speed and self.enemy_speed <= 3:
             self.enemy_speed = random.randint(-7,7)
@@ -106,7 +106,7 @@ class Enemy(pg.sprite.Sprite):
         self.rect[:-2] = np.array(self.rect[:-2]) + self.enemy_down_speed
         for field in fields:
             if field.get_rect().colliderect(self.rect):
-                self.rect[:-2] = np.array(self.rect[:-2]) - self.enemy_down_speed
+                self.rect.bottom = field.rect.top
                 self.rect.move_ip(+self.enemy_speed, 0)
             if self.rect.left < field.get_rect().left or field.get_rect().right < self.rect.right:
                 self.enemy_speed *= -1
@@ -166,8 +166,13 @@ def main(screen: pg.Surface) -> bool | None:
         if key_pressed[pg.K_RIGHT]:
             chara.move("R")
 
-        if len(pg.sprite.spritecollide(chara, enemys, True)) != 0:
-           end(False)
+        for enemy in enemys:
+            if pg.sprite.spritecollide(chara, enemys, True):
+                if enemy.rect.top -5 <= chara.rect.bottom <= enemy.rect.top + 5:
+                    pass
+                
+                else:
+                    end(False)
 
 
         # update
