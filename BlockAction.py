@@ -118,9 +118,10 @@ class Enemy(pg.sprite.Sprite):
         class about Enemy
     """
     enemy_size = np.array((30, 30))
-    enemy_down_speed = np.array((0, 7))
+    enemy_down_speed = np.array((0, 5))
+    enemy_speed = 5
     
-    def __init__(self):
+    def __init__(self,x,y):
         """
             敵Surfaceを生成する
         """
@@ -128,10 +129,7 @@ class Enemy(pg.sprite.Sprite):
         self.image = pg.Surface(self.enemy_size)
         pg.draw.rect(self.image, (255, 0, 0), (0, 0, *self.enemy_size))
         self.rect = self.image.get_rect()
-        self.rect.center = random.randint(200,980), random.randint(0,400)
-        self.enemy_speed = 0
-        while -3 <= self.enemy_speed and self.enemy_speed <= 3:
-            self.enemy_speed = random.randint(-7,7)
+        self.rect.center = x,y
         return
     
     def update(self, fields: list) -> None:
@@ -143,12 +141,15 @@ class Enemy(pg.sprite.Sprite):
             if field.get_rect().colliderect(self.rect):
                 self.rect[:-2] = np.array(self.rect[:-2]) - self.enemy_down_speed
                 self.rect.move_ip(+self.enemy_speed, 0)
-                if self.rect.left <= field.get_rect().left and field.get_rect().right <= self.rect.right:
+                will_rect = self.rect.copy()
+                will_rect.move_ip(+self.enemy_speed, 0)
+                if field.get_rect().colliderect(will_rect):
+                    self.rect[:-2] = np.array(self.rect[:-2]) + self.enemy_down_speed
+                    self.rect.move_ip(-self.enemy_speed*2, 0)
                     self.enemy_speed *= -1
-                elif self.rect.right - 5 <= field.get_rect().left <= self.rect.right +5:
-                    self.enemy_speed *= -1
-                elif self.rect.left - 5 <= field.get_rect().right <= self.rect.left + 5:
-                    self.enemy_speed *= -1
+            else:
+                print(self.rect)
+
         return
     
     
@@ -177,9 +178,10 @@ def main(screen: pg.Surface, screen_size: np.array) -> bool | None:
     # setup Surface
     fields: list[Field] = []
     chara = Character()
-    enemy_num = 4
+
     enemys = pg.sprite.Group()
-    enemys.add(Enemy() for _ in range(enemy_num))
+    enemys_xy = []
+    enemys.add(Enemy(320,300))
 
     # fields make
     unit = Field.field_unit
