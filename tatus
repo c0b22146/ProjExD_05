@@ -1,0 +1,49 @@
+[33m624a18b[m[33m ([m[1;36mHEAD -> [m[1;32mmain[m[33m, [m[1;31mupstream/main[m[33m)[m Merge pull request #7 from 719kaede/main
+[33me971460[m フィールド完成
+[33m5819840[m ステージ制作
+[33ma4d6f1b[m Merge pull request #6 from c0b22146/main
+[33mcbae767[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m 敵
+[33me8b4ced[m 敵
+[33m3c46d9a[m Merge pull request #5 from c0a2204450/main
+[33md0847a9[m ジャンプをマージ
+[33m640d693[m Merge pull request #4 from Hayato22166/main
+[33m0a65424[m merge end
+[33m84b25f7[m 修正
+[33m3cee529[m test
+[33m94c6e9b[m goal 修正
+[33m974eef2[m Merge pull request #2 from 719kaede/main
+[33m17fa6e5[m 取り消し
+[33m298498b[m Merge branch 'main' of https://github.com/AtoKashinoki/ProjExD_05
+[33madf30f6[m 上書き
+[33mae4a88a[m @
+[33mc178fda[m[33m ([m[1;31morigin/C0B22146/Enemy[m[33m, [m[1;32mC0B22146/Enemy[m[33m)[m 修正
+[33m74de1ec[m merge about end
+[33m756b334[m jumpをマージ
+[33m384f83e[m goal-time-merge
+[33m1dfa42a[m 修正
+[33m018d6f0[m end
+[33m88bf76c[m Merge branch 'C0B22042/CharaAnimation'
+[33mb23b2fc[m Field merge
+[33m7e34adc[m 修正
+[33m2fd9b6e[m 修正
+[33m745d798[m 一部修正
+[33mcf28b1b[m 修正
+[33m64361a1[m 一部修正
+[33m9b69316[m 移動時のエフェクトを追加実装完了
+[33m13ccae9[m README修正
+[33ma9246c3[m README修正
+[33m7ccbf80[m Merge branch 'main' of https://github.com/c0b22146/ProjExD_05 into C0B22146/Enemy
+[33m89c0eb0[m time修正
+[33m431e79c[m Readme 修正
+[33m666d88d[m time
+[33m90d327e[m end機能
+[33m619e4b3[m goal
+[33m494c015[m 修正
+[33mc49328e[m README、pyファイル名変更
+[33m725790c[m README更新
+[33md9399b4[m fieldクラス実装完了
+[33mff8e0bf[m 追加機能:Enemy
+[33ma04d9ca[m ジャンプ機能実装
+[33m62167b5[m ブランチ切り替え
+[33madb9e12[m[33m ([m[1;32mEnemy[m[33m)[m 初期状態
+[33m4ea37f7[m Base program
