@@ -9,7 +9,6 @@ import sys
 import pygame as pg
 import random
 import numpy as np
-from pygame.sprite import AbstractGroup
 
 
 # class objects
@@ -109,8 +108,8 @@ class Enemy(pg.sprite.Sprite):
             if field.get_rect().colliderect(self.rect):
                 self.rect[:-2] = np.array(self.rect[:-2]) - self.enemy_down_speed
                 self.rect.move_ip(+self.enemy_speed, 0)
-        if self.rect.left < 0 or 1000 < self.rect.right:
-            self.enemy_speed *= -1
+            if self.rect.left < field.get_rect().left or field.get_rect().right < self.rect.right:
+                self.enemy_speed *= -1
         return
     
     
@@ -168,7 +167,7 @@ def main(screen: pg.Surface) -> bool | None:
             chara.move("R")
 
         if len(pg.sprite.spritecollide(chara, enemys, True)) != 0:
-            end(False)
+           end(False)
 
 
         # update
