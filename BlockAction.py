@@ -47,11 +47,18 @@ class Character:
     """
     # setup variables
     delta = {}
+<<<<<<< HEAD:BlockAction.py
     field_unit = Field.field_unit
     chara_color = np.array((127, 127, 127))
     chara_rect = np.array((20, 500, field_unit*4, field_unit*4))
     down_speed = np.array((0, field_unit))
     move_speed = np.array((field_unit, 0))
+=======
+    chara_size = np.array((20, 20))
+    down_speed = np.array((0, 3))
+    move_speed = np.array((5, 0))
+    
+>>>>>>> C0A22044/jump:base.py
 
     effect_rect = np.array((0, 0, field_unit, field_unit))
     effect_time = 25
@@ -61,6 +68,7 @@ class Character:
         self.image = pg.Surface(chara_rect[2:])
         pg.draw.rect(self.image, self.chara_color, (0, 0, *chara_rect[2:]))
         self.rect = self.image.get_rect()
+<<<<<<< HEAD:BlockAction.py
         self.rect[:-2] = chara_rect[:-2]
         # effect image
         self.effect_image = pg.Surface(self.effect_rect[2:])
@@ -68,10 +76,16 @@ class Character:
         self.effects = list()
         self.remove_alpha = 255//self.effect_time
         self.effect_freq = effect_freq
+=======
+        self.rect[:-2] = [10, 500]
+        self.jump_time = 0
+        self.jump_poss = False
+>>>>>>> C0A22044/jump:base.py
         return
 
     def update(self, fields: list) -> None:
         """"""
+<<<<<<< HEAD:BlockAction.py
         self.rect[:-2] = np.array(self.rect[:-2]) + self.down_speed
         for field in fields:
             if field.get_rect().colliderect(self.rect):
@@ -91,7 +105,26 @@ class Character:
             self.effects[i][1].set_alpha(self.effects[i][0])
         if len(self.effects) > 0 > self.effects[0][0]:
             del self.effects[0]
+=======
+        if self.jump_time <= 0 :
+            self.rect[:-2] = np.array(self.rect[:-2]) + self.down_speed
+            for field in fields:
+                if field.get_rect().colliderect(self.rect):
+                    self.rect[:-2] = np.array(self.rect[:-2]) - self.down_speed
+                    self.jump_poss = True
+                
+        else:
+            self.rect[:-2] = np.array(self.rect[:-2]) - self.down_speed
+        self.jump_time -= 1
+>>>>>>> C0A22044/jump:base.py
         return
+    
+    def jump(self):
+        if self.jump_poss:
+            self.jump_time = 25
+            self.jump_poss = False
+        return
+        
 
     def move(self, LR: str, fields: list) -> None:
         """"""
@@ -100,6 +133,7 @@ class Character:
             move = self.move_speed * -1
         elif LR == "R":
             move = self.move_speed
+
         self.rect[:-2] = self.rect[:-2] + move
         for field in fields:
             if field.get_rect().colliderect(self.rect):
@@ -170,6 +204,9 @@ def main(screen: pg.Surface, screen_size: np.array) -> bool | None:
 
         if key_pressed[pg.K_RIGHT]:
             chara.move("R", fields)
+
+        if event.type == pg.KEYDOWN and key_pressed[pg.K_UP]:
+            chara.jump()
 
         # update
         chara.update(fields)
