@@ -121,7 +121,7 @@ def main(screen: pg.Surface) -> bool | None:
         for event in pg.event.get():
             # quit process
             if event.type == pg.QUIT:
-                end(True, screen)
+                
                 return
 
             # reboot process
