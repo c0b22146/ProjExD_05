@@ -1,11 +1,7 @@
 """
 
     ProjExD 共同開発
-<<<<<<< HEAD
-    上書き
-=======
     ・・・
->>>>>>> C0B22166/end
 
 """
 # import module
@@ -16,7 +12,6 @@ import numpy as np
 import time
 
 
-<<<<<<< HEAD
 class Goal:
     """
     ゴールできます
@@ -55,8 +50,6 @@ class Status:#残り時間を表示
         return False
 
 
-=======
->>>>>>> C0B22166/end
 # class objects
 class Field:
     """
@@ -98,7 +91,6 @@ class Character:
     chara_rect = np.array((20, 500, field_unit*4, field_unit*4))
     down_speed = np.array((0, field_unit))
     move_speed = np.array((field_unit, 0))
-
     effect_rect = np.array((0, 0, field_unit, field_unit))
     effect_time = 25
 
@@ -114,14 +106,12 @@ class Character:
         self.effects = list()
         self.remove_alpha = 255//self.effect_time
         self.effect_freq = effect_freq
+        self.jump_time = 0
+        self.jump_poss = False
         return
 
     def update(self, fields: list) -> None:
         """"""
-        self.rect[:-2] = np.array(self.rect[:-2]) + self.down_speed
-        for field in fields:
-            if field.get_rect().colliderect(self.rect):
-                self.rect[:-2] = np.array(self.rect[:-2]) - self.down_speed
         # effect process
         #  effect create
         if random.randint(0, self.effect_freq-1) == 0:
@@ -137,6 +127,25 @@ class Character:
             self.effects[i][1].set_alpha(self.effects[i][0])
         if len(self.effects) > 0 > self.effects[0][0]:
             del self.effects[0]
+
+        if self.jump_time <= 0 :
+            self.rect[:-2] = np.array(self.rect[:-2]) + self.down_speed
+            print("junp")
+            for field in fields:
+                if field.get_rect().colliderect(self.rect):
+                    self.rect[:-2] = np.array(self.rect[:-2]) - self.down_speed
+                    self.jump_poss = True
+        else:
+            self.rect[:-2] = np.array(self.rect[:-2]) - self.down_speed
+        self.jump_time -= 1
+        print(self.jump_time)
+
+        return
+    
+    def jump(self):
+        if self.jump_poss:
+            self.jump_time = 25
+            self.jump_poss = False
         return
 
     def move(self, LR: str, fields: list) -> None:
@@ -146,6 +155,7 @@ class Character:
             move = self.move_speed * -1
         elif LR == "R":
             move = self.move_speed
+
         self.rect[:-2] = self.rect[:-2] + move
         for field in fields:
             if field.get_rect().colliderect(self.rect):
@@ -185,19 +195,13 @@ def main(screen: pg.Surface, screen_size: np.array) -> bool | None:
     """
     # setup variables
     clock = pg.time.Clock()
-<<<<<<< HEAD
     tmr = 0
     time_limit = 50*10
-=======
->>>>>>> C0B22166/end
 
     # setup Surface
     fields: list[Field] = []
     chara = Character()
-<<<<<<< HEAD
     timer = Status(time_limit)
-=======
->>>>>>> C0B22166/end
 
     # fields make
     unit = Field.field_unit
@@ -210,11 +214,8 @@ def main(screen: pg.Surface, screen_size: np.array) -> bool | None:
          Field(np.array((15, 3, 1, 3)) * block)
          ]
 
-<<<<<<< HEAD
     goal = Goal([24 * block + 5, 1 * block])
 
-=======
->>>>>>> C0B22166/end
     # fields setup
     for field_add in field_adds:
         fields.append(field_add)
@@ -230,11 +231,7 @@ def main(screen: pg.Surface, screen_size: np.array) -> bool | None:
         for event in pg.event.get():
             # quit process
             if event.type == pg.QUIT:
-<<<<<<< HEAD
                 end(False, screen)
-=======
-                
->>>>>>> C0B22166/end
                 return
 
             # reboot process
@@ -248,35 +245,29 @@ def main(screen: pg.Surface, screen_size: np.array) -> bool | None:
         if key_pressed[pg.K_RIGHT]:
             chara.move("R", fields)
 
+        if event.type == pg.KEYDOWN and key_pressed[pg.K_UP]:
+            chara.jump()
+
         # update
         chara.update(fields)
-<<<<<<< HEAD
         if timer.update(tmr):
             end(False)
             return
         if goal.do_goal(chara.rect):
             end(True)#clear!いえーい
             return
-=======
->>>>>>> C0B22166/end
 
         # draw
         screen.fill("white", (0, 0, 1000, 600))
         for field in fields:
             field.draw(screen)
-<<<<<<< HEAD
         timer.draw(screen)
         goal.draw(screen)
-=======
->>>>>>> C0B22166/end
         chara.draw(screen)
         pg.display.update()
 
         # tike process
-<<<<<<< HEAD
         tmr += 1
-=======
->>>>>>> C0B22166/end
         clock.tick(50)
     return
 
