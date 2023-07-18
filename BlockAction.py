@@ -11,11 +11,14 @@ import random
 import numpy as np
 import time
 
+
 class Goal:
     """
     ゴールできます
     """
     def __init__(self, goal_post:list):#ゴールマークの四角を書いています
+        goal_post[1] = goal_post[1] * -1 + 540
+
         self.goal_size = np.array((30, 30))
         self.image = pg.Surface(self.goal_size)
         pg.draw.rect(self.image, (163, 212, 255), (0, 0, *self.goal_size))
@@ -169,7 +172,6 @@ def main(screen: pg.Surface, screen_size: np.array) -> bool | None:
     # setup Surface
     fields: list[Field] = []
     chara = Character()
-    goal = Goal([960, 500])
     timer = Status(time_limit)
 
     # fields make
@@ -182,6 +184,8 @@ def main(screen: pg.Surface, screen_size: np.array) -> bool | None:
          Field(np.array((7, 3, 3, 1)) * block),
          Field(np.array((15, 3, 1, 3)) * block)
          ]
+
+    goal = Goal([24 * block + 5, 1 * block])
 
     # fields setup
     for field_add in field_adds:
