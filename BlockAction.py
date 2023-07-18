@@ -9,6 +9,42 @@ import sys
 import pygame as pg
 import random
 import numpy as np
+import time
+
+class Goal:
+    """
+    ゴールできます
+    """
+    def __init__(self, goal_post:list):#ゴールマークの四角を書いています
+        self.goal_size = np.array((30, 30))
+        self.image = pg.Surface(self.goal_size)
+        pg.draw.rect(self.image, (163, 212, 255), (0, 0, *self.goal_size))
+        self.rect = self.image.get_rect()
+        self.rect[:-2] = goal_post
+        return
+
+    def draw(self, screen: pg.Surface) -> None:
+        """"""
+        screen.blit(self.image, self.rect)#ゴールの四角出現
+        return
+    
+    def do_goal(self, chara_rct: pg.Rect):
+        return pg.Rect.contains(self.rect, chara_rct)#四角に四角inしてたらTrue
+
+class Status:#残り時間を表示
+    def __init__(self, limit):
+        self.font = pg.font.Font(None, 50)
+        self.limit = limit
+
+    def draw(self, screen: pg.Surface):
+        self.txt = self.font.render(str((self.time_limit)/50), True, (255, 255, 255))
+        screen.blit(self.txt, [10, 560])#残り時間表示
+    
+    def update(self, tmr):#時間を更新。self.time_limitは残り時間
+        self.time_limit = self.limit-tmr
+        if self.time_limit <= 0:
+            return True
+        return False
 
 
 # class objects
@@ -127,10 +163,14 @@ def main(screen: pg.Surface, screen_size: np.array) -> bool | None:
     """
     # setup variables
     clock = pg.time.Clock()
+    tmr = 0
+    time_limit = 50*10
 
     # setup Surface
     fields: list[Field] = []
     chara = Character()
+    goal = Goal([960, 500])
+    timer = Status(time_limit)
 
     # fields make
     unit = Field.field_unit
@@ -173,15 +213,24 @@ def main(screen: pg.Surface, screen_size: np.array) -> bool | None:
 
         # update
         chara.update(fields)
+        if timer.update(tmr):
+            end(False)
+            return
+        if goal.do_goal(chara.rect):
+            end(True)#clear!いえーい
+            return
 
         # draw
         screen.fill("white", (0, 0, 1000, 600))
         for field in fields:
             field.draw(screen)
+        timer.draw(screen)
+        goal.draw(screen)
         chara.draw(screen)
         pg.display.update()
 
         # tike process
+        tmr += 1
         clock.tick(50)
     return
 
